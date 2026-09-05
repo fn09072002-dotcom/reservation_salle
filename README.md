@@ -57,3 +57,28 @@ L'ORM permet de manipuler les donnees comme des objets PHP sans ecrire de
 requetes SQL directement — il genere lui-meme le SQL adapte au moteur de
 base utilise. Le SQL a la main demande de connaitre la syntaxe exacte du
 SGBD, mais offre un controle plus fin sur les requetes complexes.
+
+## Etape 3 — Creer les modeles
+
+### 1. Quel type de relation Eloquent avez-vous utilise ?
+
+Une relation un-a-plusieurs (hasMany sur Salle, belongsTo sur Reservation),
+reflet qu'une salle peut avoir plusieurs reservations mais qu'une
+reservation n'appartient qu'a une seule salle.
+
+### 2. Pourquoi declarer $fillable ?
+
+Pour se proteger de l'assignation en masse non controlee : sans cette
+liste blanche, Salle::create($_POST) pourrait ecraser des colonnes
+sensibles si des champs inattendus etaient ajoutes dans le formulaire.
+
+### 3. Pourquoi convertir active en booleen ?
+
+MySQL stocke ce champ en tinyint(1), un entier brut. Le cast permet de
+manipuler $salle->active comme un vrai booleen PHP dans le code metier.
+
+### 4. Pourquoi convertir les dates en objets ?
+
+Pour utiliser directement des methodes de comparaison et de calcul
+(diffInHours, isPast...) sans reparser manuellement des chaines a chaque
+utilisation — essentiel pour la regle des quatre heures maximum.
