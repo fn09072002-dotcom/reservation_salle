@@ -82,3 +82,23 @@ manipuler $salle->active comme un vrai booleen PHP dans le code metier.
 Pour utiliser directement des methodes de comparaison et de calcul
 (diffInHours, isPast...) sans reparser manuellement des chaines a chaque
 utilisation — essentiel pour la regle des quatre heures maximum.
+
+## Etape 4 — Ajouter les donnees initiales
+
+### 1. Quelle difference existe entre migration et seeder ?
+
+La migration definit la structure de la base (tables, colonnes,
+contraintes). Le seeder insere des donnees dans une structure deja
+existante. Une migration s'occupe du contenant, un seeder du contenu.
+
+### 2. Pourquoi les donnees initiales doivent-elles etre reproductibles ?
+
+Pour que n'importe qui (autre developpeur, serveur de test, CI) puisse
+reconstituer un environnement identique en relancant le script, sans
+risque d'obtenir un resultat different selon le nombre d'executions.
+
+### 3. Comment empecher les doublons ?
+
+En utilisant firstOrCreate() avant l'insertion, base sur un critere qui
+identifie une salle de facon unique (ici le nom) — la ligne n'est creee
+que si aucune correspondance n'existe deja.
