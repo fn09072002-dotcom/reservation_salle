@@ -31,3 +31,29 @@ des versions differentes.
 Il est entierement regenerable a partir de composer.json et
 composer.lock via `composer install` — le versionner alourdirait le
 depot pour rien.
+
+## Etape 2 — Configurer Eloquent
+
+### 1. Quel role joue Capsule\Manager ?
+
+Il configure et demarre Eloquent en dehors du framework Laravel — il gere
+la connexion a la base de donnees et expose le Schema Builder et l'ORM,
+exactement comme le ferait Laravel en interne.
+
+### 2. Pourquoi Eloquent peut-il fonctionner sans Laravel ?
+
+Parce qu'Eloquent est distribue comme une bibliotheque independante
+(illuminate/database), pas couplee au reste du framework. Capsule\Manager
+sert de point d'entree simplifie pour l'utiliser de facon autonome.
+
+### 3. Ou doit se trouver le demarrage de l'ORM ?
+
+Dans un seul endroit centralise (config/database.php), jamais disperse
+dans plusieurs classes.
+
+### 4. Quelle difference existe entre ORM et SQL ecrit a la main ?
+
+L'ORM permet de manipuler les donnees comme des objets PHP sans ecrire de
+requetes SQL directement — il genere lui-meme le SQL adapte au moteur de
+base utilise. Le SQL a la main demande de connaitre la syntaxe exacte du
+SGBD, mais offre un controle plus fin sur les requetes complexes.
