@@ -207,3 +207,28 @@ periode.
 En injectant des implementations en memoire des interfaces de
 Repository, et en demarrant Eloquent avec une connexion SQLite en
 memoire plutot que MySQL.
+
+## Etape 10 — Configurer FastRoute
+
+### 1. Pourquoi FastRoute ne construit-il pas lui-meme le controleur ?
+
+FastRoute fait correspondre une URL/methode a une reference de classe
+et methode — il ne sait pas comment construire cette classe. Cette
+responsabilite appartient au conteneur d'injection.
+
+### 2. Quelle difference existe entre 404 et 405 ?
+
+404 signifie que l'URL ne correspond a aucune route declaree. 405
+signifie que l'URL existe, mais que la methode HTTP utilisee n'est
+pas autorisee pour cette route.
+
+### 3. Pourquoi contraindre {id} avec \d+ ?
+
+Pour que seules les URLs avec un identifiant numerique matchent la
+route — un id non numerique tombe naturellement en 404.
+
+### 4. Quel composant doit interpreter le handler retourne ?
+
+Le point d'entree (public/index.php) — il recoit la reference de
+classe/methode, resout l'instance via le conteneur, et appelle la
+methode avec les parametres extraits.
