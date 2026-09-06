@@ -102,3 +102,29 @@ risque d'obtenir un resultat different selon le nombre d'executions.
 En utilisant firstOrCreate() avant l'insertion, base sur un critere qui
 identifie une salle de facon unique (ici le nom) — la ligne n'est creee
 que si aucune correspondance n'existe deja.
+
+## Etape 5 — Creer la validation
+
+### 1. Pourquoi separer la validation syntaxique des regles metier ?
+
+La validation syntaxique verifie la forme des donnees, sans dependre
+d'aucune donnee externe. Les regles metier necessitent d'interroger la
+base et le contexte applicatif. Les separer permet de tester la
+validation de forme instantanement, sans base de donnees.
+
+### 2. Pourquoi creer une interface de validation ?
+
+ValidatorInterface garantit que tout validateur respecte le meme
+contrat, ce qui permet au code appelant de traiter n'importe quel
+validateur de facon uniforme.
+
+### 3. Pourquoi le validateur ne doit-il pas enregistrer les donnees ?
+
+Sa seule responsabilite est de dire si les donnees sont valides —
+melanger validation et ecriture en base violerait le principe de
+responsabilite unique.
+
+### 4. Comment retourner plusieurs erreurs en une seule fois ?
+
+En accumulant les erreurs dans un tableau au fur et a mesure des
+verifications, plutot que de s'arreter a la premiere erreur trouvee.
