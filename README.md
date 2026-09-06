@@ -181,3 +181,29 @@ memoire.
 
 Elle permet de remplacer l'implementation concrete par une autre (en
 memoire pour les tests) sans toucher au code qui utilise l'interface.
+
+## Etape 8 — Implementer les regles metier
+
+### 1. Pourquoi ces regles ne sont-elles pas dans le controleur ?
+
+Le controleur a pour seul role de traiter la requete HTTP. Mélanger la
+logique metier dedans le rendrait impossible a tester sans simuler une
+requete HTTP complete, et le coupleraitInutilement au web.
+
+### 2. Pourquoi le service depend-il d'une interface de Repository ?
+
+Pour ne jamais etre couple a une implementation concrete (Eloquent) —
+ca permet de le tester avec une implementation en memoire, sans
+dependre de MySQL.
+
+### 3. Quelle exception doit etre levee en cas de conflit ?
+
+SalleIndisponibleException — la meme que pour une salle inactive, car
+les deux cas signifient que la salle n'est pas disponible pour cette
+periode.
+
+### 4. Comment tester le service sans MySQL ?
+
+En injectant des implementations en memoire des interfaces de
+Repository, et en demarrant Eloquent avec une connexion SQLite en
+memoire plutot que MySQL.
