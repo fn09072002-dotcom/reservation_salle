@@ -155,3 +155,29 @@ reste de l'application.
 Non. Le DTO garantit uniquement que les donnees sont bien formees et
 typees ; la regle de chevauchement necessite d'interroger la base et
 appartient au futur Service.
+
+## Etape 7 — Creer l'acces aux donnees
+
+### 1. Eloquent constitue-t-il deja un acces aux donnees ?
+
+Oui — Salle::find(), Reservation::where() sont deja un acces aux
+donnees fonctionnel. Eloquent est un Repository generique fourni par
+le framework (pattern Active Record).
+
+### 2. Pourquoi ajouter un Repository au-dessus d'Eloquent ?
+
+Pour isoler le reste de l'application de la syntaxe specifique
+d'Eloquent. Sans cette couche, Salle::where(...) se retrouverait
+disperse dans les Controllers, ce que l'enonce interdit explicitement.
+
+### 3. Cette abstraction est-elle toujours necessaire ?
+
+Pas toujours. Ici elle se justifie par l'interdiction explicite
+d'appeler Eloquent depuis les Controllers, et le besoin de tester les
+Services sans MySQL en substituant le Repository par une version en
+memoire.
+
+### 4. Quel avantage apporte-t-elle ?
+
+Elle permet de remplacer l'implementation concrete par une autre (en
+memoire pour les tests) sans toucher au code qui utilise l'interface.
