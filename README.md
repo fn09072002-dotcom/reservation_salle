@@ -128,3 +128,30 @@ responsabilite unique.
 
 En accumulant les erreurs dans un tableau au fur et a mesure des
 verifications, plutot que de s'arreter a la premiere erreur trouvee.
+
+## Etape 6 — Creer les objets de transport
+
+### 1. Quelle difference existe entre DTO et modele Eloquent ?
+
+Le modele Eloquent represente une ligne persistee en base, avec un
+comportement et un cycle de vie lie a la base de donnees. Le DTO est
+une structure de donnees passive, immuable, sans lien avec la
+persistance — il transporte des valeurs typees entre deux couches.
+
+### 2. Pourquoi le DTO ne doit-il pas appeler save() ?
+
+Sa seule responsabilite est le transport de donnees deja validees et
+typees — appeler save() melangerait transport et persistance, deux
+responsabilites distinctes.
+
+### 3. A quel moment transforme-t-on les chaines en dates ?
+
+Dans le DTO lui-meme, au moment de sa construction (fromArray) — le
+point de passage oblige entre les donnees brutes du formulaire et le
+reste de l'application.
+
+### 4. Le DTO doit-il contenir la regle de chevauchement ?
+
+Non. Le DTO garantit uniquement que les donnees sont bien formees et
+typees ; la regle de chevauchement necessite d'interroger la base et
+appartient au futur Service.
