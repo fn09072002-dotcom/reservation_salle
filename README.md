@@ -232,3 +232,33 @@ route — un id non numerique tombe naturellement en 404.
 Le point d'entree (public/index.php) — il recoit la reference de
 classe/methode, resout l'instance via le conteneur, et appelle la
 methode avec les parametres extraits.
+
+## Etape 11 — Configurer PHP-DI
+
+### 1. Quelle difference existe entre injection et conteneur ?
+
+L'injection est un principe : une classe recoit ses dependances de
+l'exterieur. Le conteneur est un outil qui automatise la construction
+et la fourniture de ces dependances.
+
+### 2. Qu'est-ce que l'autowiring ?
+
+La capacite de PHP-DI a construire automatiquement une classe en
+lisant les types declares dans son constructeur, sans assemblage
+explicite.
+
+### 3. Pourquoi les interfaces necessitent-elles une definition ?
+
+PHP-DI ne peut pas deviner quelle implementation choisir pour une
+interface — il faut le dire explicitement.
+
+### 4. Pourquoi limiter $container->get() au point d'entree ?
+
+Sinon les dependances d'une classe deviennent invisibles, cachees
+dans son code plutot qu'affichees dans son constructeur.
+
+### 5. Quel anti-pattern apparait si toutes les classes interrogent le conteneur ?
+
+Le Service Locator — chaque classe devient couplee au conteneur
+plutot qu'a ses vraies dependances metier, rendant les tests plus
+difficiles.
