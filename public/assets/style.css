@@ -717,3 +717,92 @@ main > .carte > p:last-child > a:hover {
 
     
 }
+
+/* ==========================
+   EN-TETE DE PAGE
+========================== */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+
+/* ==========================
+   BADGES DE STATUT
+========================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 13px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.badge-actif,
+.badge-confirmee {
+    background-color: var(--vert-fond);
+    color: var(--vert);
+}
+
+.badge-inactif,
+.badge-annulee {
+    background-color: var(--rouge-fond);
+    color: var(--rouge);
+}
+
+
+/* ==========================
+   ETAT VIDE
+========================== */
+
+.etat-vide {
+    text-align: center;
+    padding: 55px 20px;
+    color: var(--gris);
+    background-color: var(--blanc);
+    border: 1.5px dashed var(--gris-clair);
+    border-radius: 14px;
+    font-size: 0.95rem;
+}
+
+
+/* ==========================
+   PAGES D'ERREUR
+========================== */
+
+.page-erreur {
+    text-align: center;
+    padding: 60px 30px;
+}
+
+.page-erreur .code {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 4.5rem;
+    color: var(--or-fonce);
+    line-height: 1;
+    margin-bottom: 14px;
+}
+
+.page-erreur h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.page-erreur p {
+    color: var(--gris);
+    margin-bottom: 26px;
+}

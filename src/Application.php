@@ -6,6 +6,7 @@ namespace App;
 
 use App\Controller\ReservationController;
 use App\Controller\SalleController;
+use App\View\View;
 use FastRoute\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -30,10 +31,10 @@ final class Application
             SalleController::class => $this->salleController,
             ReservationController::class => $this->reservationController,
         ];
-        if ($routeInfo[0] === Dispatcher::FOUND && $routeInfo[1] === ['accueil', 'index']) {
-    require dirname(__DIR__) . '/templates/accueil.php';
-    return;
-}
+                if ($routeInfo[0] === Dispatcher::FOUND && $routeInfo[1] === ['accueil', 'index']) {
+            View::renderView('accueil', ['titre' => 'Accueil']);
+            return;
+        }
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
