@@ -1,87 +1,725 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #2c3e50;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+:root {
+    --marine: #1e2a4a;
+    --marine-clair: #2d3d63;
+    --marine-tres-clair: #eef1f8;
+
+    --or: #c8963e;
+    --or-clair: #e0b866;
+    --or-fonce: #a97a2e;
+
+    --encre: #1f2430;
+    --gris: #6b7280;
+    --gris-clair: #e5e7eb;
+    --gris-tres-clair: #f8fafc;
+
+    --fond: #f3f4f6;
+    --blanc: #ffffff;
+
+    --vert: #166534;
+    --vert-fond: #dcfce7;
+
+    --rouge: #991b1b;
+    --rouge-fond: #fee2e2;
+
+    --ombre: 0 2px 6px rgba(16, 24, 40, 0.06);
+    --ombre-hover: 0 10px 25px rgba(16, 24, 40, 0.12);
 }
 
-header nav {
-    margin-bottom: 20px;
-}
 
-header nav a {
-    margin-right: 15px;
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: bold;
-}
+/* ==========================
+   RÉINITIALISATION
+========================== */
 
-h1 {
-    border-bottom: 2px solid #2563eb;
-    padding-bottom: 8px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-}
-
-th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #2563eb;
-    color: white;
-}
-
-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 6px;
-    max-width: 400px;
-}
-
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold;
-}
-
-input, select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+* {
     box-sizing: border-box;
 }
 
-button {
-    margin-top: 16px;
-    padding: 10px 20px;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Helvetica, Arial, sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #eef1f6 0%,
+            var(--fond) 300px
+        );
+
+    color: var(--encre);
+
+    margin: 0;
+    min-height: 100vh;
+
+    line-height: 1.55;
+
+    -webkit-font-smoothing: antialiased;
 }
+
+
+/* ==========================
+   TITRES
+========================== */
+
+h1 {
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-weight: normal;
+
+    font-size: 2rem;
+
+    color: var(--marine);
+
+    margin: 0 0 12px;
+
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    color: var(--marine);
+
+    font-size: 1.4rem;
+
+    margin-bottom: 20px;
+}
+
+
+/* ==========================
+   HEADER / NAVIGATION
+========================== */
+
+header {
+    background:
+        linear-gradient(
+            135deg,
+            var(--marine) 0%,
+            var(--marine-clair) 100%
+        );
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+header nav {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    max-width: 960px;
+
+    margin: 0 auto;
+
+    padding: 0 24px;
+
+    height: 64px;
+}
+
+
+/* Liens navigation */
+
+header nav a {
+    color: rgba(255, 255, 255, 0.75);
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    font-size: 0.9rem;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+header nav a:hover {
+    color: var(--blanc);
+
+    background-color:
+        rgba(255, 255, 255, 0.10);
+
+    transform: translateY(-1px);
+}
+
+
+/* Premier lien = Accueil */
+
+header nav a:first-child {
+    color: var(--or);
+
+    font-family: Georgia, serif;
+
+    font-size: 1.05rem;
+
+    margin-right: 12px;
+}
+
+header nav a:first-child:hover {
+    color: var(--or-clair);
+
+    background: transparent;
+}
+
+
+/* ==========================
+   CONTENU PRINCIPAL
+========================== */
+
+main {
+    max-width: 960px;
+
+    margin: 45px auto;
+
+    padding: 0 24px 70px;
+}
+
+
+/* Carte principale */
+
+main > .carte {
+    background-color: var(--blanc);
+
+    border-radius: 16px;
+
+    padding: 38px 40px;
+
+    border:
+        1px solid rgba(229, 231, 235, 0.8);
+
+    box-shadow: var(--ombre);
+}
+
+
+/* ==========================
+   BOUTONS
+========================== */
+
+main a[href*="create"],
+main a[href*="nouveau"],
+main a[href$="/edit"]:not(td a) {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 12px 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--or),
+            var(--or-fonce)
+        );
+
+    color: var(--blanc);
+
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-weight: 700;
+
+    font-size: 0.86rem;
+
+    letter-spacing: 0.01em;
+
+    box-shadow:
+        0 4px 10px rgba(200, 150, 62, 0.25);
+
+    transition: all 0.2s ease;
+}
+
+
+main a[href*="create"]:hover,
+main a[href*="nouveau"]:hover,
+main a[href$="/edit"]:not(td a):hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(200, 150, 62, 0.35);
+}
+
+
+/* ==========================
+   TABLEAUX
+========================== */
+
+table {
+    width: 100%;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    background-color: var(--blanc);
+
+    border:
+        1px solid var(--gris-clair);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow: var(--ombre);
+}
+
+
+/* En-tête */
+
+thead th {
+
+    background:
+        linear-gradient(
+            180deg,
+            #f9fafb,
+            #f3f4f6
+        );
+
+    color: var(--gris);
+
+    text-transform: uppercase;
+
+    font-size: 0.7rem;
+
+    letter-spacing: 0.08em;
+
+    font-weight: 700;
+
+    padding: 15px 18px;
+
+    text-align: left;
+
+    border-bottom:
+        1px solid var(--gris-clair);
+}
+
+
+/* Cellules */
+
+tbody td {
+
+    padding: 17px 18px;
+
+    border-bottom:
+        1px solid var(--gris-clair);
+
+    font-size: 0.92rem;
+
+    vertical-align: middle;
+}
+
+
+/* Dernière ligne */
+
+tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+/* Animation lignes */
+
+tbody tr {
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Hover */
+
+tbody tr:hover td {
+
+    background-color:
+        var(--marine-tres-clair);
+}
+
+
+/* ==========================
+   LIENS DANS TABLEAUX
+========================== */
+
+tbody td a {
+
+    color: var(--marine-clair);
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    font-size: 0.84rem;
+
+    margin-right: 14px;
+
+    transition: color 0.2s ease;
+}
+
+
+tbody td a:hover {
+
+    color: var(--or-fonce);
+
+    text-decoration: underline;
+}
+
+
+/* ==========================
+   FORMULAIRES
+========================== */
+
+form {
+
+    background-color:
+        var(--gris-tres-clair);
+
+    padding: 30px 32px;
+
+    border-radius: 14px;
+
+    max-width: 520px;
+
+    border:
+        1px solid var(--gris-clair);
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+
+/* Labels */
+
+label {
+
+    display: block;
+
+    margin-top: 22px;
+
+    margin-bottom: 8px;
+
+    font-weight: 700;
+
+    font-size: 0.75rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.06em;
+
+    color: var(--gris);
+}
+
+
+label:first-of-type {
+
+    margin-top: 0;
+}
+
+
+/* Champs */
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    font-size: 0.95rem;
+
+    font-family: inherit;
+
+    border:
+        1.5px solid var(--gris-clair);
+
+    border-radius: 9px;
+
+    background-color: var(--blanc);
+
+    color: var(--encre);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Focus */
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    outline: none;
+
+    border-color:
+        var(--marine-clair);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(45, 61, 99, 0.10);
+}
+
+
+/* Checkbox */
+
+label input[type="checkbox"] {
+
+    width: auto;
+
+    margin-right: 10px;
+
+    accent-color:
+        var(--marine);
+}
+
+
+/* ==========================
+   BOUTON FORMULAIRE
+========================== */
+
+button {
+
+    margin-top: 28px;
+
+    padding: 13px 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--marine),
+            var(--marine-clair)
+        );
+
+    color: var(--blanc);
+
+    border: none;
+
+    border-radius: 9px;
+
+    font-size: 0.9rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 10px
+        rgba(30, 42, 74, 0.20);
+
+    transition: all 0.2s ease;
+}
+
+
+button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 18px
+        rgba(30, 42, 74, 0.30);
+}
+
+
+/* ==========================
+   FICHES / DETAILS
+========================== */
+
+ul:not(.erreurs) {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0 0 24px;
+
+    background-color:
+        var(--gris-tres-clair);
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--gris-clair);
+}
+
+
+ul:not(.erreurs) li {
+
+    padding: 15px 20px;
+
+    border-bottom:
+        1px solid var(--gris-clair);
+
+    font-size: 0.92rem;
+}
+
+
+ul:not(.erreurs) li:last-child {
+
+    border-bottom: none;
+}
+
+
+/* ==========================
+   MESSAGES ERREUR
+========================== */
 
 .erreurs {
-    background-color: #fee2e2;
-    border-left: 4px solid #b91c1c;
-    color: #b91c1c;
-    padding: 12px 20px;
+
+    list-style: none;
+
+    background-color:
+        var(--rouge-fond);
+
+    border-left:
+        4px solid var(--rouge);
+
+    color: var(--rouge);
+
+    padding: 16px 20px;
+
+    border-radius: 9px;
+
+    font-size: 0.88rem;
+
+    margin: 0 0 24px;
+
+    box-shadow:
+        0 2px 5px
+        rgba(153, 27, 27, 0.08);
 }
 
+
+.erreurs li {
+
+    padding: 4px 0;
+}
+
+
+/* ==========================
+   MESSAGE SUCCÈS
+========================== */
+
 .succes {
-    background-color: #dcfce7;
-    border-left: 4px solid #15803d;
-    color: #15803d;
-    padding: 12px 20px;
+
+    background-color:
+        var(--vert-fond);
+
+    border-left:
+        4px solid var(--vert);
+
+    color: var(--vert);
+
+    padding: 16px 20px;
+
+    border-radius: 9px;
+
+    margin-bottom: 24px;
+
+    font-weight: 600;
+}
+
+
+/* ==========================
+   LIENS RETOUR
+========================== */
+
+main > p:last-child > a,
+main > .carte > p:last-child > a {
+
+    color: var(--gris);
+
+    text-decoration: none;
+
+    font-size: 0.88rem;
+
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+
+main > p:last-child > a:hover,
+main > .carte > p:last-child > a:hover {
+
+    color: var(--marine);
+
+    text-decoration: underline;
+}
+
+
+/* ==========================
+   RESPONSIVE MOBILE
+========================== */
+
+@media (max-width: 700px) {
+
+    header nav {
+
+        padding: 0 15px;
+
+        gap: 2px;
+
+        overflow-x: auto;
+    }
+
+    header nav a {
+
+        padding: 9px 12px;
+
+        font-size: 0.82rem;
+
+        white-space: nowrap;
+    }
+
+    main {
+
+        margin: 30px auto;
+
+        padding: 0 15px 50px;
+    }
+
+    h1 {
+
+        font-size: 1.65rem;
+    }
+
+    main > .carte {
+
+        padding: 25px 20px;
+    }
+
+    form {
+
+        padding: 24px 20px;
+    }
+
+    table {
+
+        font-size: 0.85rem;
+    }
+
+    thead th,
+    tbody td {
+
+        padding: 12px;
+    }
+
+    .table-responsive {
+
+        overflow-x: auto;
+    }
+
+    
 }
