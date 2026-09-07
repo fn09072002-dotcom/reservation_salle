@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: reservation_salles_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: reservation_salles
+      MYSQL_USER: fatou_app
+      MYSQL_PASSWORD: fatou123
+      MYSQL_ROOT_PASSWORD: root_local
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_data:
