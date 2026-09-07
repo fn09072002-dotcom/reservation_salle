@@ -2,16 +2,7 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../vendor/autoload.php';
-
 use App\Model\Salle;
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
-$configurerCapsule = require __DIR__ . '/../config/database.php';
-$configurerCapsule();
 
 $salles = [
     ['nom' => 'Amphitheatre A', 'batiment' => 'Batiment principal', 'capacite' => 250, 'type' => 'amphitheatre', 'active' => true],

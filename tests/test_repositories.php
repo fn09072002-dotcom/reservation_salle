@@ -24,7 +24,6 @@ function verifier(string $intitule, bool $condition): void
     echo "OK - $intitule\n";
 }
 
-// Nettoyage prealable
 Reservation::query()->delete();
 
 $salleRepo = new EloquentSalleRepository();
@@ -48,7 +47,6 @@ $reservation = new Reservation([
 $reservationRepo->enregistrer($reservation);
 verifier('reservation enregistree avec un id', $reservation->id !== null);
 
-// Chevauchement : 11h-13h chevauche 10h-12h
 $conflit = $reservationRepo->rechercherConflit(
     $salle->id,
     new DateTimeImmutable('2026-06-10 11:00:00'),
@@ -56,7 +54,6 @@ $conflit = $reservationRepo->rechercherConflit(
 );
 verifier('conflit detecte sur chevauchement', $conflit !== null);
 
-// Pas de chevauchement : 12h-14h (voisine, ne chevauche pas 10h-12h)
 $pasDeConflit = $reservationRepo->rechercherConflit(
     $salle->id,
     new DateTimeImmutable('2026-06-10 12:00:00'),
@@ -68,7 +65,6 @@ $reservationRepo->annuler($reservation);
 $reservationAnnulee = $reservationRepo->trouver($reservation->id);
 verifier('reservation annulee', $reservationAnnulee->statut === 'annulee');
 
-// Apres annulation, plus de conflit
 $plusDeConflit = $reservationRepo->rechercherConflit(
     $salle->id,
     new DateTimeImmutable('2026-06-10 11:00:00'),

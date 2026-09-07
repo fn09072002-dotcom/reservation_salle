@@ -48,7 +48,6 @@ $service = new CreerReservationService($salleRepo, $reservationRepo);
 
 $demain = (new DateTimeImmutable())->modify('+1 day');
 
-// Cas 1 : reservation valide
 $dto = new CreerReservationDTO(
     salleId: 1,
     responsable: 'Awa Ndiaye',
@@ -60,7 +59,6 @@ $dto = new CreerReservationDTO(
 $reservation = $service->creer($dto);
 verifier('reservation valide creee', $reservation->id !== null);
 
-// Cas 2 : salle inactive
 try {
     $service->creer(new CreerReservationDTO(2, 'X', 'x@x.sn', 'Motif test', $demain->setTime(10, 0), $demain->setTime(11, 0)));
     verifier('salle inactive rejetee', false);
@@ -68,7 +66,6 @@ try {
     verifier('salle inactive rejetee', true);
 }
 
-// Cas 3 : fin avant debut
 try {
     $service->creer(new CreerReservationDTO(1, 'X', 'x@x.sn', 'Motif test', $demain->setTime(12, 0), $demain->setTime(10, 0)));
     verifier('fin avant debut rejetee', false);
@@ -76,7 +73,6 @@ try {
     verifier('fin avant debut rejetee', true);
 }
 
-// Cas 4 : duree excessive
 try {
     $service->creer(new CreerReservationDTO(1, 'X', 'x@x.sn', 'Motif test', $demain->setTime(14, 0), $demain->setTime(20, 0)));
     verifier('duree excessive rejetee', false);
@@ -84,7 +80,6 @@ try {
     verifier('duree excessive rejetee', true);
 }
 
-// Cas 5 : date passee
 try {
     $hier = (new DateTimeImmutable())->modify('-1 day');
     $service->creer(new CreerReservationDTO(1, 'X', 'x@x.sn', 'Motif test', $hier->setTime(10, 0), $hier->setTime(11, 0)));
@@ -93,7 +88,6 @@ try {
     verifier('date passee rejetee', true);
 }
 
-// Cas 6 : conflit avec la reservation existante (10h-12h), nouvelle 11h-13h
 try {
     $service->creer(new CreerReservationDTO(1, 'X', 'x@x.sn', 'Motif test', $demain->setTime(11, 0), $demain->setTime(13, 0)));
     verifier('conflit detecte', false);
@@ -101,12 +95,10 @@ try {
     verifier('conflit detecte', true);
 }
 
-// Cas 7 : reservation voisine, 12h-14h ne chevauche pas 10h-12h
 $dtoVoisine = new CreerReservationDTO(1, 'X', 'x@x.sn', 'Motif voisin', $demain->setTime(12, 0), $demain->setTime(14, 0));
 $reservationVoisine = $service->creer($dtoVoisine);
 verifier('reservation voisine acceptee', $reservationVoisine->id !== null);
 
-// Annulation
 $annulerService = new AnnulerReservationService($reservationRepo);
 $annulerService->annuler($reservation->id);
 $reservationAnnulee = $reservationRepo->trouver($reservation->id);

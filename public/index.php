@@ -7,7 +7,6 @@ use DI\ContainerBuilder;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-// Sert les fichiers statiques reels directement, sans passer par le routeur.
 if (PHP_SAPI === 'cli-server') {
     $chemin = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
     $fichier = __DIR__ . $chemin;

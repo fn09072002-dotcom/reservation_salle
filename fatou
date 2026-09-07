@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Database\Migrations\CreateReservationsTable;
+use Database\Migrations\CreateSallesTable;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$configurerCapsule = require __DIR__ . '/config/database.php';
+$capsule = $configurerCapsule();
+
+$commande = $argv[1] ?? null;
+
+switch ($commande) {
+    case 'migrate':
+        $schema = $capsule->schema();
+
+        $migrations = [
+            new CreateSallesTable(),
+            new CreateReservationsTable(),
+        ];
+
+        foreach ($migrations as $migration) {
+            $migration->up($schema);
+        }
+        break;
+
+    case 'seed':
+        require __DIR__ . '/database/seed.php';
+        break;
+
+    default:
+        echo "Usage : php fatou migrate|seed" . PHP_EOL;
+        exit(1);
+}

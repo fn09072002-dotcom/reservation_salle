@@ -423,7 +423,6 @@ label:first-of-type {
 }
 
 
-/* Champs */
 
 input,
 select,
@@ -452,7 +451,6 @@ textarea {
 }
 
 
-/* Focus */
 
 input:focus,
 select:focus,
@@ -469,7 +467,6 @@ textarea:focus {
 }
 
 
-/* Checkbox */
 
 label input[type="checkbox"] {
 
@@ -482,9 +479,6 @@ label input[type="checkbox"] {
 }
 
 
-/* ==========================
-   BOUTON FORMULAIRE
-========================== */
 
 button {
 
