@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Exception\DonneesInvalidesException;
+use App\Validation\SalleValidator;
+use App\Validation\ValidatorInterface;
+
 final class CreerSalleDTO
 {
     public function __construct(
@@ -15,14 +19,29 @@ final class CreerSalleDTO
     ) {
     }
 
-    public static function fromArray(array $data): self
+    public static function builder(): CreerSalleDTOBuilder
     {
-        return new self(
-            nom: (string) $data['nom'],
-            batiment: (string) $data['batiment'],
-            capacite: (int) $data['capacite'],
-            type: (string) $data['type'],
-            active: (bool) ($data['active'] ?? true)
-        );
+        return new CreerSalleDTOBuilder();
+    }
+
+    public static function fromArray(array $data, ?ValidatorInterface $validator = null): self
+    {
+        $validator ??= new SalleValidator();
+
+        $resultat = $validator->validate($data);
+
+        if (!$resultat->isValid()) {
+            throw new DonneesInvalidesException($resultat->errors(), $data);
+        }
+
+        $donnees = $resultat->donneesAcceptees();
+
+        return self::builder()
+            ->nom((string) $donnees['nom'])
+            ->batiment((string) $donnees['batiment'])
+            ->capacite((int) $donnees['capacite'])
+            ->type((string) $donnees['type'])
+            ->active((bool) ($donnees['active'] ?? true))
+            ->build();
     }
 }

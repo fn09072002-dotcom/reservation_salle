@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\CreerSalleDTO;
+use App\Exception\DonneesInvalidesException;
 use App\Model\Salle;
 use App\Repository\SalleRepositoryInterface;
-use App\Validation\SalleValidator;
 use App\View\View;
 
 final class SalleController
 {
     public function __construct(
-        private readonly SalleRepositoryInterface $salles,
-        private readonly SalleValidator $validator
+        private readonly SalleRepositoryInterface $salles
     ) {
     }
 
@@ -44,18 +43,16 @@ final class SalleController
 
     public function store(array $donneesPost): void
     {
-        $resultat = $this->validator->validate($donneesPost);
-
-        if (!$resultat->isValid()) {
+        try {
+            $dto = CreerSalleDTO::fromArray($donneesPost);
+        } catch (DonneesInvalidesException $e) {
             View::renderView('salle/form', [
-                'erreurs' => $resultat->errors(),
-                'anciennesValeurs' => $donneesPost,
+                'erreurs' => $e->erreurs(),
+                'anciennesValeurs' => $e->anciennesValeurs(),
                 'titre' => 'Ajouter une salle',
             ]);
             return;
         }
-
-        $dto = CreerSalleDTO::fromArray($resultat->donneesAcceptees());
 
         $salle = new Salle([
             'nom' => $dto->nom,
@@ -97,19 +94,17 @@ final class SalleController
             return;
         }
 
-        $resultat = $this->validator->validate($donneesPost);
-
-        if (!$resultat->isValid()) {
+        try {
+            $dto = CreerSalleDTO::fromArray($donneesPost);
+        } catch (DonneesInvalidesException $e) {
             View::renderView('salle/form', [
-                'erreurs' => $resultat->errors(),
-                'anciennesValeurs' => $donneesPost,
+                'erreurs' => $e->erreurs(),
+                'anciennesValeurs' => $e->anciennesValeurs(),
                 'salle' => $salle,
                 'titre' => 'Modifier ' . $salle->nom,
             ]);
             return;
         }
-
-        $dto = CreerSalleDTO::fromArray($resultat->donneesAcceptees());
 
         $salle->nom = $dto->nom;
         $salle->batiment = $dto->batiment;

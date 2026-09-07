@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Exception\DonneesInvalidesException;
+use App\Validation\ReservationValidator;
+use App\Validation\ValidatorInterface;
 use DateTimeImmutable;
 
 final class CreerReservationDTO
@@ -18,15 +21,30 @@ final class CreerReservationDTO
     ) {
     }
 
-    public static function fromArray(array $data): self
+    public static function builder(): CreerReservationDTOBuilder
     {
-        return new self(
-            salleId: (int) $data['salle_id'],
-            responsable: (string) $data['responsable'],
-            email: (string) $data['email'],
-            motif: (string) $data['motif'],
-            dateDebut: new DateTimeImmutable((string) $data['date_debut']),
-            dateFin: new DateTimeImmutable((string) $data['date_fin'])
-        );
+        return new CreerReservationDTOBuilder();
+    }
+
+    public static function fromArray(array $data, ?ValidatorInterface $validator = null): self
+    {
+        $validator ??= new ReservationValidator();
+
+        $resultat = $validator->validate($data);
+
+        if (!$resultat->isValid()) {
+            throw new DonneesInvalidesException($resultat->errors(), $data);
+        }
+
+        $donnees = $resultat->donneesAcceptees();
+
+        return self::builder()
+            ->salleId((int) $donnees['salle_id'])
+            ->responsable((string) $donnees['responsable'])
+            ->email((string) $donnees['email'])
+            ->motif((string) $donnees['motif'])
+            ->dateDebut(new DateTimeImmutable((string) $donnees['date_debut']))
+            ->dateFin(new DateTimeImmutable((string) $donnees['date_fin']))
+            ->build();
     }
 }

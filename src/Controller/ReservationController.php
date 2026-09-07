@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\CreerReservationDTO;
+use App\Exception\DonneesInvalidesException;
 use App\Exception\ReservationIntrouvableException;
 use App\Exception\SalleIndisponibleException;
 use App\Repository\ReservationRepositoryInterface;
 use App\Repository\SalleRepositoryInterface;
 use App\Service\AnnulerReservationService;
 use App\Service\CreerReservationService;
-use App\Validation\ReservationValidator;
 use App\View\View;
 use InvalidArgumentException;
 
@@ -20,7 +20,6 @@ final class ReservationController
     public function __construct(
         private readonly ReservationRepositoryInterface $reservations,
         private readonly SalleRepositoryInterface $salles,
-        private readonly ReservationValidator $validator,
         private readonly CreerReservationService $creerService,
         private readonly AnnulerReservationService $annulerService
     ) {
@@ -59,14 +58,12 @@ final class ReservationController
 
     public function store(array $donneesPost): void
     {
-        $resultat = $this->validator->validate($donneesPost);
-
-        if (!$resultat->isValid()) {
-            $this->reafficherFormulaireAvecErreurs($resultat->errors(), $donneesPost);
+        try {
+            $dto = CreerReservationDTO::fromArray($donneesPost);
+        } catch (DonneesInvalidesException $e) {
+            $this->reafficherFormulaireAvecErreurs($e->erreurs(), $e->anciennesValeurs());
             return;
         }
-
-        $dto = CreerReservationDTO::fromArray($resultat->donneesAcceptees());
 
         try {
             $reservation = $this->creerService->creer($dto);
