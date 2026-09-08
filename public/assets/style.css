@@ -806,3 +806,18 @@ main > .carte > p:last-child > a:hover {
     color: var(--gris);
     margin-bottom: 26px;
 }
+
+
+/* ==========================
+   MESSAGE ERREUR GLOBAL
+========================== */
+
+.erreur-globale {
+    background-color: var(--rouge-fond);
+    border-left: 4px solid var(--rouge);
+    color: var(--rouge);
+    padding: 16px 20px;
+    border-radius: 9px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}

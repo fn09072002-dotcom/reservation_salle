@@ -8,6 +8,7 @@ use App\DTO\CreerSalleDTO;
 use App\Exception\DonneesInvalidesException;
 use App\Model\Salle;
 use App\Repository\SalleRepositoryInterface;
+use App\View\Flash;
 use App\View\View;
 
 final class SalleController
@@ -63,9 +64,12 @@ final class SalleController
         ]);
 
         $this->salles->enregistrer($salle);
+        Flash::success('Salle ajoutée avec succès.');
 
         header('Location: /salles/' . $salle->id);
+        
         exit;
+        
     }
 
     public function edit(int $id): void
@@ -113,6 +117,7 @@ final class SalleController
         $salle->active = $dto->active;
 
         $this->salles->enregistrer($salle);
+        Flash::success('Salle modifiee avec succes.');
 
         header('Location: /salles/' . $salle->id);
         exit;

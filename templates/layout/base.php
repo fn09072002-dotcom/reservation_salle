@@ -14,8 +14,12 @@
         </nav>
     </header>
     <main>
-        <?php if (!empty($messageSucces)): ?>
+              <?php if (!empty($messageSucces)): ?>
             <p class="succes"><?= htmlspecialchars($messageSucces, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
+
+        <?php if (!empty($messageErreur)): ?>
+            <p class="erreur-globale"><?= htmlspecialchars($messageErreur, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
 
         <?= $contenu ?>

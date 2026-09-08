@@ -1,14 +1,9 @@
 <h1><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></h1>
-
-<?php if (!empty($erreurs)): ?>
-    <ul class="erreurs">
         <?php foreach ($erreurs as $champ => $messages): ?>
             <?php foreach ($messages as $message): ?>
-                <li><?= htmlspecialchars($champ, ENT_QUOTES, 'UTF-8') ?> : <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></li>
+                <li><?php if ($champ !== 'general'): ?><?= htmlspecialchars($champ, ENT_QUOTES, 'UTF-8') ?> : <?php endif; ?><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></li>
             <?php endforeach; ?>
         <?php endforeach; ?>
-    </ul>
-<?php endif; ?>
 
 <form action="/reservations" method="post">
     <label for="salle_id">Salle</label><br>

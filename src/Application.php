@@ -22,6 +22,18 @@ final class Application
 
     public function run(): void
     {
+        try {
+            $this->dispatchRequete();
+        } catch (\Throwable $e) {
+            error_log((string) $e);
+
+            http_response_code(500);
+            View::renderView('error/500', ['titre' => 'Erreur serveur']);
+        }
+    }
+
+    private function dispatchRequete(): void
+    {
         $methode = $_SERVER['REQUEST_METHOD'];
         $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
@@ -31,7 +43,7 @@ final class Application
             SalleController::class => $this->salleController,
             ReservationController::class => $this->reservationController,
         ];
-                if ($routeInfo[0] === Dispatcher::FOUND && $routeInfo[1] === ['accueil', 'index']) {
+        if ($routeInfo[0] === Dispatcher::FOUND && $routeInfo[1] === ['accueil', 'index']) {
             View::renderView('accueil', ['titre' => 'Accueil']);
             return;
         }
@@ -39,13 +51,13 @@ final class Application
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 http_response_code(404);
-                require dirname(__DIR__) . '/templates/error/404.php';
+                View::renderView('error/404', ['titre' => 'Page introuvable']);
                 break;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
                 http_response_code(405);
                 header('Allow: ' . implode(', ', $routeInfo[1]));
-                require dirname(__DIR__) . '/templates/error/405.php';
+                View::renderView('error/405', ['titre' => 'Methode non autorisee']);
                 break;
 
             case Dispatcher::FOUND:

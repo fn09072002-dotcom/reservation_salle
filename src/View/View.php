@@ -6,8 +6,11 @@ namespace App\View;
 
 final class View
 {
-    public static function renderView(string $template, array $donnees = []): void
+        public static function renderView(string $template, array $donnees = []): void
     {
+        $donnees['messageSucces'] ??= Flash::consumeSuccess();
+        $donnees['messageErreur'] ??= Flash::consumeError();
+
         extract($donnees);
 
         ob_start();

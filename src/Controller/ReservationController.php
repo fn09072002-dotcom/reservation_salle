@@ -10,6 +10,7 @@ use App\Exception\ReservationIntrouvableException;
 use App\Exception\SalleIndisponibleException;
 use App\Repository\ReservationRepositoryInterface;
 use App\Repository\SalleRepositoryInterface;
+use App\View\Flash;     
 use App\Service\AnnulerReservationService;
 use App\Service\CreerReservationService;
 use App\View\View;
@@ -71,19 +72,23 @@ final class ReservationController
             $this->reafficherFormulaireAvecErreurs(['general' => [$e->getMessage()]], $donneesPost);
             return;
         }
+        Flash::success('Reservation creee avec succes.');
 
         header('Location: /reservations/' . $reservation->id);
         exit;
     }
 
-    public function cancel(int $id): void
+      public function cancel(int $id): void
     {
         try {
             $this->annulerService->annuler($id);
         } catch (ReservationIntrouvableException $e) {
-            View::renderView('error/404', ['titre' => 'Reservation introuvable']);
-            return;
+            Flash::error('Cette reservation est introuvable.');
+            header('Location: /reservations');
+            exit;
         }
+
+        Flash::success('Reservation annulee avec succes.');
 
         header('Location: /reservations/' . $id);
         exit;
