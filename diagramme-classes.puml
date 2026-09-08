@@ -1,0 +1,240 @@
+@startuml diagramme-classes
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide circle
+
+package "Model" {
+    class Salle {
+        +int id
+        +string nom
+        +string batiment
+        +int capacite
+        +string type
+        +bool active
+        +DateTime created_at
+        +DateTime updated_at
+        +reservations() : HasMany<Reservation>
+    }
+
+    class Reservation {
+        +int id
+        +int salle_id
+        +string responsable
+        +string email
+        +string motif
+        +DateTime date_debut
+        +DateTime date_fin
+        +string statut
+        +DateTime created_at
+        +DateTime updated_at
+        +salle() : BelongsTo<Salle>
+    }
+
+    Salle "1" -- "0..*" Reservation : possede
+}
+
+package "DTO" {
+    class CreerSalleDTO {
+        +string nom
+        +string batiment
+        +int capacite
+        +string type
+        +bool active
+        +{static} builder() : CreerSalleDTOBuilder
+        +{static} fromArray(array) : CreerSalleDTO
+    }
+
+    class CreerSalleDTOBuilder {
+        -string nom
+        -string batiment
+        -int capacite
+        +nom(string) : self
+        +batiment(string) : self
+        +capacite(int) : self
+        +build() : CreerSalleDTO
+    }
+
+    class CreerReservationDTO {
+        +int salleId
+        +string responsable
+        +string email
+        +string motif
+        +DateTimeImmutable dateDebut
+        +DateTimeImmutable dateFin
+        +{static} builder() : CreerReservationDTOBuilder
+        +{static} fromArray(array) : CreerReservationDTO
+    }
+
+    class CreerReservationDTOBuilder {
+        -int salleId
+        -DateTimeImmutable dateDebut
+        -DateTimeImmutable dateFin
+        +salleId(int) : self
+        +dateDebut(DateTimeImmutable) : self
+        +build() : CreerReservationDTO
+    }
+
+    CreerSalleDTO ..> CreerSalleDTOBuilder : utilise
+    CreerReservationDTO ..> CreerReservationDTOBuilder : utilise
+}
+
+package "Validation" {
+    interface ValidatorInterface {
+        +validate(array) : ValidationResult
+    }
+
+    class SalleValidator {
+        +validate(array) : ValidationResult
+    }
+
+    class ReservationValidator {
+        +validate(array) : ValidationResult
+    }
+
+    class ValidationResult {
+        -bool valide
+        -array erreurs
+        -array donneesAcceptees
+        +{static} succes(array) : ValidationResult
+        +{static} echec(array, array) : ValidationResult
+        +isValid() : bool
+        +errors() : array
+        +donneesAcceptees() : array
+    }
+
+    SalleValidator ..|> ValidatorInterface
+    ReservationValidator ..|> ValidatorInterface
+    SalleValidator ..> ValidationResult : produit
+    ReservationValidator ..> ValidationResult : produit
+}
+
+package "Exception" {
+    class DonneesInvalidesException {
+        -array erreurs
+        -array anciennesValeurs
+        +erreurs() : array
+        +anciennesValeurs() : array
+    }
+
+    class SalleIndisponibleException
+    class ReservationIntrouvableException
+}
+
+CreerSalleDTO ..> SalleValidator : valide via
+CreerSalleDTO ..> DonneesInvalidesException : leve
+CreerReservationDTO ..> ReservationValidator : valide via
+CreerReservationDTO ..> DonneesInvalidesException : leve
+
+package "Repository" {
+    interface SalleRepositoryInterface {
+        +lister() : Collection
+        +trouver(int) : Salle
+        +enregistrer(Salle) : Salle
+    }
+
+    interface ReservationRepositoryInterface {
+        +lister() : Collection
+        +trouver(int) : Reservation
+        +rechercherConflit(int, DateTimeImmutable, DateTimeImmutable, int) : Reservation
+        +enregistrer(Reservation) : Reservation
+    }
+
+    class EloquentSalleRepository {
+        +lister() : Collection
+        +trouver(int) : Salle
+        +enregistrer(Salle) : Salle
+    }
+
+    class EloquentReservationRepository {
+        +lister() : Collection
+        +trouver(int) : Reservation
+        +rechercherConflit(int, DateTimeImmutable, DateTimeImmutable, int) : Reservation
+        +enregistrer(Reservation) : Reservation
+    }
+
+    EloquentSalleRepository ..|> SalleRepositoryInterface
+    EloquentReservationRepository ..|> ReservationRepositoryInterface
+    EloquentSalleRepository ..> Salle
+    EloquentReservationRepository ..> Reservation
+}
+
+package "Service" {
+    class CreerReservationService {
+        -SalleRepositoryInterface salles
+        -ReservationRepositoryInterface reservations
+        +creer(CreerReservationDTO) : Reservation
+    }
+
+    class AnnulerReservationService {
+        -ReservationRepositoryInterface reservations
+        +annuler(int) : Reservation
+    }
+
+    CreerReservationService --> SalleRepositoryInterface : depend de
+    CreerReservationService --> ReservationRepositoryInterface : depend de
+    CreerReservationService ..> CreerReservationDTO : consomme
+    CreerReservationService ..> SalleIndisponibleException : leve
+    AnnulerReservationService --> ReservationRepositoryInterface : depend de
+    AnnulerReservationService ..> ReservationIntrouvableException : leve
+}
+
+package "Controller" {
+    class SalleController {
+        -SalleRepositoryInterface salles
+        +index() : void
+        +show(int) : void
+        +create() : void
+        +store(array) : void
+        +edit(int) : void
+        +update(int, array) : void
+    }
+
+    class ReservationController {
+        -ReservationRepositoryInterface reservations
+        -SalleRepositoryInterface salles
+        -CreerReservationService creerService
+        -AnnulerReservationService annulerService
+        +index() : void
+        +show(int) : void
+        +create() : void
+        +store(array) : void
+        +cancel(int) : void
+    }
+
+    SalleController --> SalleRepositoryInterface : depend de
+    SalleController ..> CreerSalleDTO : construit
+    ReservationController --> SalleRepositoryInterface : depend de
+    ReservationController --> ReservationRepositoryInterface : depend de
+    ReservationController --> CreerReservationService : depend de
+    ReservationController --> AnnulerReservationService : depend de
+}
+
+package "Vue et support" {
+    class View {
+        +{static} renderView(string, array) : void
+    }
+
+    class Flash {
+        +{static} success(string) : void
+        +{static} error(string) : void
+        +{static} consumeSuccess() : string
+        +{static} consumeError() : string
+    }
+
+    class Application {
+        -Dispatcher dispatcher
+        -SalleController salleController
+        -ReservationController reservationController
+        +run() : void
+    }
+}
+
+SalleController ..> View : appelle
+SalleController ..> Flash : appelle
+ReservationController ..> View : appelle
+ReservationController ..> Flash : appelle
+Application --> SalleController : delegue a
+Application --> ReservationController : delegue a
+
+@enduml
