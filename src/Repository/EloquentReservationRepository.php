@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Model\Reservation;
 use DateTimeImmutable;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Support\Collection;
 
 final class EloquentReservationRepository implements ReservationRepositoryInterface
@@ -56,5 +57,18 @@ final class EloquentReservationRepository implements ReservationRepositoryInterf
         $reservation->save();
 
         return $reservation;
+    }
+
+    public function creerAvecVerrou(int $salleId, callable $callback): mixed
+    {
+        return Capsule::connection()->transaction(function () use ($salleId, $callback) {
+         
+            Reservation::where('salle_id', $salleId)
+                ->where('statut', 'confirmee')
+                ->lockForUpdate()
+                ->get();
+
+            return $callback();
+        });
     }
 }

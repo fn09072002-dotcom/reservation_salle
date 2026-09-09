@@ -47,26 +47,28 @@ final class CreerReservationService
             throw new InvalidArgumentException('La reservation doit commencer dans le futur.');
         }
 
-        $conflit = $this->reservations->rechercherConflit(
-            $dto->salleId,
-            $dto->dateDebut,
-            $dto->dateFin
-        );
+        return $this->reservations->creerAvecVerrou($dto->salleId, function () use ($dto) {
+            $conflit = $this->reservations->rechercherConflit(
+                $dto->salleId,
+                $dto->dateDebut,
+                $dto->dateFin
+            );
 
-        if ($conflit !== null) {
-            throw new SalleIndisponibleException('La salle est indisponible pendant cette periode.');
-        }
+            if ($conflit !== null) {
+                throw new SalleIndisponibleException('La salle est indisponible pendant cette periode.');
+            }
 
-        $reservation = new Reservation([
-            'salle_id' => $dto->salleId,
-            'responsable' => $dto->responsable,
-            'email' => $dto->email,
-            'motif' => $dto->motif,
-            'date_debut' => $dto->dateDebut,
-            'date_fin' => $dto->dateFin,
-            'statut' => 'confirmee',
-        ]);
+            $reservation = new Reservation([
+                'salle_id' => $dto->salleId,
+                'responsable' => $dto->responsable,
+                'email' => $dto->email,
+                'motif' => $dto->motif,
+                'date_debut' => $dto->dateDebut,
+                'date_fin' => $dto->dateFin,
+                'statut' => 'confirmee',
+            ]);
 
-        return $this->reservations->enregistrer($reservation);
+            return $this->reservations->enregistrer($reservation);
+        });
     }
 }

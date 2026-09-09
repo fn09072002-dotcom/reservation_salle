@@ -26,4 +26,7 @@ interface ReservationRepositoryInterface
     public function enregistrer(Reservation $reservation): Reservation;
 
     public function annuler(Reservation $reservation): Reservation;
+
+ 
+    public function creerAvecVerrou(int $salleId, callable $callback): mixed;
 }

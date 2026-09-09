@@ -78,4 +78,12 @@ final class ReservationRepositoryEnMemoire implements ReservationRepositoryInter
 
         return $reservation;
     }
+
+    public function creerAvecVerrou(int $salleId, callable $callback): mixed
+    {
+        // Pas de vraie base ni de vrai verrou en memoire : un seul
+        // processus PHP execute ce code a la fois dans les tests,
+        // donc le callback s'execute simplement tel quel.
+        return $callback();
+    }
 }
