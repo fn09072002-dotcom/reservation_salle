@@ -13,6 +13,7 @@ use App\Service\AnnulerReservationService;
 use App\Service\CreerReservationService;
 use App\Validation\ReservationValidator;
 use App\Validation\SalleValidator;
+use App\View\View;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -39,6 +40,7 @@ return [
 
     CreerReservationService::class => autowire(),
     AnnulerReservationService::class => autowire(),
+    View::class => autowire(),
 
     SalleController::class => autowire(),
     ReservationController::class => autowire(),

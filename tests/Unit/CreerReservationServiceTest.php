@@ -6,49 +6,58 @@ namespace Tests\Unit;
 
 use App\DTO\CreerReservationDTO;
 use App\Exception\SalleIndisponibleException;
+use App\Model\Reservation;
 use App\Model\Salle;
+use App\Repository\ReservationRepositoryInterface;
+use App\Repository\SalleRepositoryInterface;
 use App\Service\CreerReservationService;
 use DateTimeImmutable;
 use InvalidArgumentException;
-use Tests\Fakes\ReservationRepositoryEnMemoire;
-use Tests\Fakes\SalleRepositoryEnMemoire;
-use Tests\Support\DatabaseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Tests\Support\BooteEloquentPourLesCasts;
 
-final class CreerReservationServiceTest extends DatabaseTestCase
+final class CreerReservationServiceTest extends TestCase
 {
-    private SalleRepositoryEnMemoire $salles;
-    private ReservationRepositoryEnMemoire $reservations;
+    use BooteEloquentPourLesCasts;
+
+    private SalleRepositoryInterface&MockObject $salles;
+    private ReservationRepositoryInterface&MockObject $reservations;
     private CreerReservationService $service;
     private DateTimeImmutable $demain;
+    private Salle $salleActive;
+    private Salle $salleInactive;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->booterEloquentPourLesCasts();
 
-        $this->salles = new SalleRepositoryEnMemoire();
-        $this->reservations = new ReservationRepositoryEnMemoire();
+        $this->salles = $this->createMock(SalleRepositoryInterface::class);
+        $this->reservations = $this->createMock(ReservationRepositoryInterface::class);
+
+        $this->reservations->method('creerAvecVerrou')
+            ->willReturnCallback(fn (int $salleId, callable $callback) => $callback());
+
         $this->service = new CreerReservationService($this->salles, $this->reservations);
         $this->demain = (new DateTimeImmutable())->modify('+1 day');
 
-        $salleActive = new Salle([
+        $this->salleActive = new Salle([
             'nom' => 'Salle B12',
             'batiment' => 'Batiment B',
             'capacite' => 40,
             'type' => 'cours',
             'active' => true,
         ]);
-        $salleActive->id = 1;
-        $this->salles->ajouter($salleActive);
+        $this->salleActive->id = 1;
 
-        $salleInactive = new Salle([
+        $this->salleInactive = new Salle([
             'nom' => 'Salle Fermee',
             'batiment' => 'Batiment C',
             'capacite' => 10,
             'type' => 'reunion',
             'active' => false,
         ]);
-        $salleInactive->id = 2;
-        $this->salles->ajouter($salleInactive);
+        $this->salleInactive->id = 2;
     }
 
     private function dto(
@@ -64,16 +73,21 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testReservationValideEstCreee(): void
     {
+        $this->salles->method('trouver')->with(1)->willReturn($this->salleActive);
+        $this->reservations->method('rechercherConflit')->willReturn(null);
+        $this->reservations->method('enregistrer')->willReturnArgument(0);
+
         $reservation = $this->service->creer(
             $this->dto(1, $this->demain->setTime(10, 0), $this->demain->setTime(12, 0))
         );
 
-        self::assertNotNull($reservation->id);
         self::assertSame('confirmee', $reservation->statut);
     }
 
     public function testSalleInexistanteEstRejetee(): void
     {
+        $this->salles->method('trouver')->with(999)->willReturn(null);
+
         $this->expectException(InvalidArgumentException::class);
 
         $this->service->creer(
@@ -83,6 +97,8 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testSalleInactiveEstRejetee(): void
     {
+        $this->salles->method('trouver')->with(2)->willReturn($this->salleInactive);
+
         $this->expectException(SalleIndisponibleException::class);
 
         $this->service->creer(
@@ -92,6 +108,8 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testFinAnterieureAuDebutEstRejetee(): void
     {
+        $this->salles->method('trouver')->willReturn($this->salleActive);
+
         $this->expectException(InvalidArgumentException::class);
 
         $this->service->creer(
@@ -101,6 +119,8 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testDureeSuperieureAQuatreHeuresEstRejetee(): void
     {
+        $this->salles->method('trouver')->willReturn($this->salleActive);
+
         $this->expectException(InvalidArgumentException::class);
 
         $this->service->creer(
@@ -110,6 +130,8 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testDatePasseeEstRejetee(): void
     {
+        $this->salles->method('trouver')->willReturn($this->salleActive);
+
         $hier = (new DateTimeImmutable())->modify('-1 day');
 
         $this->expectException(InvalidArgumentException::class);
@@ -121,9 +143,19 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testConflitAvecReservationExistanteEstDetecte(): void
     {
-        $this->service->creer(
-            $this->dto(1, $this->demain->setTime(10, 0), $this->demain->setTime(12, 0))
-        );
+        $this->salles->method('trouver')->willReturn($this->salleActive);
+
+        $conflitExistant = new Reservation([
+            'salle_id' => 1,
+            'responsable' => 'Quelqu\'un d\'autre',
+            'email' => 'autre@universite.sn',
+            'motif' => 'Deja reservee',
+            'date_debut' => $this->demain->setTime(10, 0),
+            'date_fin' => $this->demain->setTime(12, 0),
+            'statut' => 'confirmee',
+        ]);
+
+        $this->reservations->method('rechercherConflit')->willReturn($conflitExistant);
 
         $this->expectException(SalleIndisponibleException::class);
 
@@ -134,14 +166,14 @@ final class CreerReservationServiceTest extends DatabaseTestCase
 
     public function testReservationVoisineSansChevauchementEstAcceptee(): void
     {
-        $this->service->creer(
-            $this->dto(1, $this->demain->setTime(10, 0), $this->demain->setTime(12, 0))
-        );
+        $this->salles->method('trouver')->willReturn($this->salleActive);
+        $this->reservations->method('rechercherConflit')->willReturn(null);
+        $this->reservations->method('enregistrer')->willReturnArgument(0);
 
         $reservationVoisine = $this->service->creer(
             $this->dto(1, $this->demain->setTime(12, 0), $this->demain->setTime(14, 0))
         );
 
-        self::assertNotNull($reservationVoisine->id);
+        self::assertSame('confirmee', $reservationVoisine->statut);
     }
 }

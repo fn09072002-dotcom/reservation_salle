@@ -3,11 +3,8 @@ services:
     image: mysql:8.0
     container_name: reservation_salles_mysql
     restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: reservation_salles
-      MYSQL_USER: fatou_app
-      MYSQL_PASSWORD: fatou123
-      MYSQL_ROOT_PASSWORD: root_local
+    env_file:
+      - ./docker/.env
     ports:
       - "3307:3306"
     volumes:
@@ -25,17 +22,22 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-      DB_DRIVER: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: reservation_salles
-      DB_USERNAME: fatou_app
-      DB_PASSWORD: fatou123
+    env_file:
+      - ./docker/.env
     ports:
       - "8081:80"
+
+  adminer:
+    image: adminer:4
+    container_name: reservation_salles_adminer
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8082:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
 
 volumes:
   mysql_data:

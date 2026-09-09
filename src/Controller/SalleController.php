@@ -14,7 +14,8 @@ use App\View\View;
 final class SalleController
 {
     public function __construct(
-        private readonly SalleRepositoryInterface $salles
+        private readonly SalleRepositoryInterface $salles,
+        private readonly View $view
     ) {
     }
 
@@ -22,7 +23,7 @@ final class SalleController
     {
         $salles = $this->salles->lister();
 
-        View::renderView('salle/index', ['salles' => $salles, 'titre' => 'Liste des salles']);
+        $this->view->renderView('salle/index', ['salles' => $salles, 'titre' => 'Liste des salles']);
     }
 
     public function show(int $id): void
@@ -30,16 +31,16 @@ final class SalleController
         $salle = $this->salles->trouver($id);
 
         if ($salle === null) {
-            View::renderView('error/404', ['titre' => 'Salle introuvable']);
+            $this->view->renderView('error/404', ['titre' => 'Salle introuvable']);
             return;
         }
 
-        View::renderView('salle/show', ['salle' => $salle, 'titre' => $salle->nom]);
+        $this->view->renderView('salle/show', ['salle' => $salle, 'titre' => $salle->nom]);
     }
 
     public function create(): void
     {
-        View::renderView('salle/form', ['erreurs' => [], 'anciennesValeurs' => [], 'titre' => 'Ajouter une salle']);
+        $this->view->renderView('salle/form', ['erreurs' => [], 'anciennesValeurs' => [], 'titre' => 'Ajouter une salle']);
     }
 
     public function store(array $donneesPost): void
@@ -47,7 +48,7 @@ final class SalleController
         try {
             $dto = CreerSalleDTO::fromArray($donneesPost);
         } catch (DonneesInvalidesException $e) {
-            View::renderView('salle/form', [
+            $this->view->renderView('salle/form', [
                 'erreurs' => $e->erreurs(),
                 'anciennesValeurs' => $e->anciennesValeurs(),
                 'titre' => 'Ajouter une salle',
@@ -67,9 +68,7 @@ final class SalleController
         Flash::success('Salle ajoutée avec succès.');
 
         header('Location: /salles/' . $salle->id);
-        
         exit;
-        
     }
 
     public function edit(int $id): void
@@ -77,11 +76,11 @@ final class SalleController
         $salle = $this->salles->trouver($id);
 
         if ($salle === null) {
-            View::renderView('error/404', ['titre' => 'Salle introuvable']);
+            $this->view->renderView('error/404', ['titre' => 'Salle introuvable']);
             return;
         }
 
-        View::renderView('salle/form', [
+        $this->view->renderView('salle/form', [
             'erreurs' => [],
             'anciennesValeurs' => $salle->toArray(),
             'salle' => $salle,
@@ -94,14 +93,14 @@ final class SalleController
         $salle = $this->salles->trouver($id);
 
         if ($salle === null) {
-            View::renderView('error/404', ['titre' => 'Salle introuvable']);
+            $this->view->renderView('error/404', ['titre' => 'Salle introuvable']);
             return;
         }
 
         try {
             $dto = CreerSalleDTO::fromArray($donneesPost);
         } catch (DonneesInvalidesException $e) {
-            View::renderView('salle/form', [
+            $this->view->renderView('salle/form', [
                 'erreurs' => $e->erreurs(),
                 'anciennesValeurs' => $e->anciennesValeurs(),
                 'salle' => $salle,
