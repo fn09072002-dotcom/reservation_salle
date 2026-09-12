@@ -30,4 +30,16 @@ final class CreateReservationsTable implements MigrationInterface
 
         echo "Table 'reservations' creee." . PHP_EOL;
     }
+
+    public function down(Builder $schema): void
+    {
+        if (!$schema->hasTable('reservations')) {
+            echo "Table 'reservations' deja absente." . PHP_EOL;
+            return;
+        }
+
+        $schema->drop('reservations');
+
+        echo "Table 'reservations' supprimee." . PHP_EOL;
+    }
 }

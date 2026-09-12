@@ -23,7 +23,8 @@ final class ReservationController
         private readonly SalleRepositoryInterface $salles,
         private readonly CreerReservationService $creerService,
         private readonly AnnulerReservationService $annulerService,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Flash $flash
     ) {
     }
 
@@ -36,7 +37,6 @@ final class ReservationController
 
     public function show(int $id): void
     {
-
         $reservation = $this->reservations->trouver($id);
 
         if ($reservation === null) {
@@ -75,7 +75,7 @@ final class ReservationController
             return;
         }
 
-        Flash::success('Reservation creee avec succes.');
+        $this->flash->success('Reservation creee avec succes.');
 
         header('Location: /reservations/' . $reservation->id);
         exit;
@@ -86,12 +86,12 @@ final class ReservationController
         try {
             $this->annulerService->annuler($id);
         } catch (ReservationIntrouvableException $e) {
-            Flash::error('Cette reservation est introuvable.');
+            $this->flash->error('Cette reservation est introuvable.');
             header('Location: /reservations');
             exit;
         }
 
-        Flash::success('Reservation annulee avec succes.');
+        $this->flash->success('Reservation annulee avec succes.');
 
         header('Location: /reservations/' . $id);
         exit;

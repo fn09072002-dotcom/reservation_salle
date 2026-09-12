@@ -31,11 +31,26 @@ switch ($commande) {
         }
         break;
 
+    case 'rollback':
+        $schema = $capsule->schema();
+
+        // Ordre inverse de 'migrate' : reservations a une cle
+        // etrangere vers salles, il faut la supprimer en premier.
+        $migrations = [
+            new CreateReservationsTable(),
+            new CreateSallesTable(),
+        ];
+
+        foreach ($migrations as $migration) {
+            $migration->down($schema);
+        }
+        break;
+
     case 'seed':
         require __DIR__ . '/database/seed.php';
         break;
 
     default:
-        echo "Usage : php fatou migrate|seed" . PHP_EOL;
+        echo "Usage : php fatou migrate|rollback|seed" . PHP_EOL;
         exit(1);
 }

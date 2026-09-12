@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use App\Session\SessionManager;
+use App\View\Flash;
+use App\View\JsonRenderer;
 
 use App\Application;
 use App\Controller\ReservationController;
@@ -41,9 +44,13 @@ return [
     CreerReservationService::class => autowire(),
     AnnulerReservationService::class => autowire(),
     View::class => autowire(),
+    JsonRenderer::class => autowire(),
 
     SalleController::class => autowire(),
     ReservationController::class => autowire(),
+
+    SessionManager::class => autowire(),
+    Flash::class => autowire(),
 
     Dispatcher::class => factory(function (): Dispatcher {
         $definirRoutes = require dirname(__DIR__) . '/routes/web.php';

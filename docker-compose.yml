@@ -27,17 +27,18 @@ services:
     ports:
       - "8081:80"
 
-  adminer:
-    image: adminer:4
-    container_name: reservation_salles_adminer
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: reservation_salles_phpmyadmin
     restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
     ports:
-      - "8082:8080"
+      - "8082:80"
     environment:
-      ADMINER_DEFAULT_SERVER: mysql
+      PMA_HOST: mysql
+      PMA_PORT: 3306
 
 volumes:
   mysql_data:

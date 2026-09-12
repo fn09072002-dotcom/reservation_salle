@@ -28,4 +28,16 @@ final class CreateSallesTable implements MigrationInterface
 
         echo "Table 'salles' creee." . PHP_EOL;
     }
+
+    public function down(Builder $schema): void
+    {
+        if (!$schema->hasTable('salles')) {
+            echo "Table 'salles' deja absente." . PHP_EOL;
+            return;
+        }
+
+        $schema->drop('salles');
+
+        echo "Table 'salles' supprimee." . PHP_EOL;
+    }
 }

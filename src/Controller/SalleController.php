@@ -15,7 +15,8 @@ final class SalleController
 {
     public function __construct(
         private readonly SalleRepositoryInterface $salles,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Flash $flash
     ) {
     }
 
@@ -65,7 +66,7 @@ final class SalleController
         ]);
 
         $this->salles->enregistrer($salle);
-        Flash::success('Salle ajoutée avec succès.');
+        $this->flash->success('Salle ajoutée avec succès.');
 
         header('Location: /salles/' . $salle->id);
         exit;
@@ -116,7 +117,7 @@ final class SalleController
         $salle->active = $dto->active;
 
         $this->salles->enregistrer($salle);
-        Flash::success('Salle modifiee avec succes.');
+        $this->flash->success('Salle modifiee avec succes.');
 
         header('Location: /salles/' . $salle->id);
         exit;
