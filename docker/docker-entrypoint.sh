@@ -14,4 +14,8 @@ DB_PASSWORD=${DB_PASSWORD:-fatou123}
 ENVEOF
 fi
 
+echo "=== Diagnostic modules MPM actives ==="
+ls -la /etc/apache2/mods-enabled/ | grep -i mpm || echo "(aucun mpm trouve dans mods-enabled)"
+echo "======================================="
+
 exec "$@"
