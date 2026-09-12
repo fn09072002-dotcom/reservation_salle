@@ -14,8 +14,17 @@ DB_PASSWORD=${DB_PASSWORD:-fatou123}
 ENVEOF
 fi
 
-echo "=== Diagnostic modules MPM actives ==="
-ls -la /etc/apache2/mods-enabled/ | grep -i mpm || echo "(aucun mpm trouve dans mods-enabled)"
-echo "======================================="
+# Force un seul MPM actif (contournement d'un probleme de cache de
+# build observe sur Railway ou mpm_event restait active malgre
+# a2dismod au moment du build). Fait au demarrage, garantit
+# l'etat correct quel que soit ce qui s'est passe pendant le build.
+rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf
+rm -f /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf
+ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load
+ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
+
+echo "=== Modules MPM apres correction ==="
+ls -la /etc/apache2/mods-enabled/ | grep -i mpm
+echo "======================================"
 
 exec "$@"
